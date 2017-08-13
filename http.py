@@ -3,7 +3,7 @@ import urllib2
 import urllib
 from bs4 import BeautifulSoup
 import re
-import time
+import time,sqlite3
 from pyExcelerator import *
 
 all_area={'haidian':'海淀','changping':'昌平','daxing':'大兴','dongcheng':'东城','chaoyang':'朝阳','shunyi':'顺义','xicheng':'西城','fengtai':'丰台','fangshan':'房山','mentougou':'门头沟','pinggu':'平谷',
@@ -12,7 +12,7 @@ all_area={'haidian':'海淀','changping':'昌平','daxing':'大兴','dongcheng':
 #操作数据库函数
 def modify_database(area,num):
     # 数据库操作
-    data_base_ershoufang = sqlite3.connect('/Users/lihuixian/ershoufang/ershoufang_beijing.db')
+    data_base_ershoufang = sqlite3.connect('D:\database\ershoufang_beijing.db')
     data_base_ershoufang.text_factory = str
     cu = data_base_ershoufang.cursor()
     cu.execute("create table  if not exists house_num(area_name TEXT UNIQUE,num integer)")
@@ -21,11 +21,9 @@ def modify_database(area,num):
         data_base_ershoufang.execute("insert into house_num(area_name,num) values(?,?);",
                                     (area, num))
         print "ok"
-
+        data_base_ershoufang.commit()
     except sqlite3.IntegrityError:
         print "error"
-        break
-
 
 for i in all_area:
     headers={'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
